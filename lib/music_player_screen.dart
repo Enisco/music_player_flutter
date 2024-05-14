@@ -294,6 +294,11 @@ class ControlButtons extends StatefulWidget {
 
 class _ControlButtonsState extends State<ControlButtons> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,

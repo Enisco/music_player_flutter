@@ -95,6 +95,17 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
+Future<AudioPlayerHandler> initializeAudioHandler() async {
+  return await AudioService.init(
+    builder: () => AudioPlayerHandlerImpl(),
+    config: const AudioServiceConfig(
+      androidNotificationChannelId: 'com.ryanheise.myapp.channel.audio',
+      androidNotificationChannelName: 'Audio playback',
+      androidNotificationOngoing: true,
+    ),
+  );
+}
+
 class QueueState {
   static const QueueState empty =
       QueueState([], 0, [], AudioServiceRepeatMode.none);
@@ -232,7 +243,7 @@ class AudioPlayerHandlerImpl extends BaseAudioHandler
       playbackState.add(playbackState.value.copyWith(speed: speed));
     });
     // Load and broadcast the initial queue
-    await updateQueue(_mediaLibrary.items[MediaLibrary.albumsRootId]!);
+    await updateQueue(_mediaLibrary.items[MediaLibrary.albumsRootId] ?? []);
     // For Android 11, record the most recent item so it can be resumed.
     mediaItem
         .whereType<MediaItem>()
@@ -424,45 +435,8 @@ class MediaLibrary {
         playable: false,
       ),
     ],
-    albumsRootId: [
-      MediaItem(
-        id: 'https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3',
-        album: "Science Friday",
-        title: "A Salute To Head-Scratching Science",
-        artist: "Science Friday and WNYC Studios",
-        duration: const Duration(milliseconds: 5739820),
-        artUri: Uri.parse(
-            'https://3.bp.blogspot.com/-q1OBsTx8xX8/V-lo0UPUT_I/AAAAAAAAAm0/dOe7mOfyvvoBxrJTVFMmU9_3UB2UH2B4ACEw/s640/1.png'),
-      ),
-      MediaItem(
-        id: 'https://s3.amazonaws.com/scifri-segments/scifri201711241.mp3',
-        album: null,
-        title: "From Cat Rheology To Operatic Incompetence",
-        artist: "Science Friday and WNYC Studios",
-        duration: const Duration(milliseconds: 2856950),
-        artUri: Uri.parse(
-            'https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'),
-      ),
-      MediaItem(
-        id: 'https://s3.amazonaws.com/scifri-segments/scifri202011274.mp3',
-        album: "Science Friday",
-        title: "Laugh Along At Home With The Ig Nobel Awards",
-        artist: "Science Friday and WNYC Studios",
-        duration: const Duration(milliseconds: 1791883),
-        artUri:
-            Uri.parse('https://i.ytimg.com/vi/U_0IV2fC93I/maxresdefault.jpg'),
-      ),
-    ],
+    albumsRootId: songsList,
   };
 }
 
-Future<AudioPlayerHandler> initializeAudioHandler() async {
-  return await AudioService.init(
-    builder: () => AudioPlayerHandlerImpl(),
-    config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.ryanheise.myapp.channel.audio',
-      androidNotificationChannelName: 'Audio playback',
-      androidNotificationOngoing: true,
-    ),
-  );
-}
+List<MediaItem> songsList = [];
