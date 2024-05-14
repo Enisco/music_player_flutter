@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, must_be_immutable
 
 import 'dart:async';
 
@@ -239,16 +239,20 @@ class MusicPlayScreen extends StatelessWidget {
                     return IconButton(
                       icon: icons[index],
                       onPressed: () {
-                        audioHandlerMain.setRepeatMode(cycleModes[
-                            (cycleModes.indexOf(repeatMode) + 1) %
-                                cycleModes.length]);
+                        audioHandlerMain.setRepeatMode(
+                          cycleModes[(cycleModes.indexOf(repeatMode) + 1) %
+                              cycleModes.length],
+                        );
                       },
                     );
                   },
                 ),
 
                 // Playback controls
-                ControlButtons(audioHandlerMain),
+                ControlButtons(
+                  audioHandler: audioHandlerMain,
+                  positionDataStream: _positionDataStream,
+                ),
 
                 // Shuffle controls
                 StreamBuilder<bool>(
@@ -284,9 +288,14 @@ class MusicPlayScreen extends StatelessWidget {
 }
 
 class ControlButtons extends StatefulWidget {
+  Stream<PositionData> positionDataStream;
   final AudioPlayerHandler audioHandler;
 
-  const ControlButtons(this.audioHandler, {super.key});
+  ControlButtons({
+    super.key,
+    required this.audioHandler,
+    required this.positionDataStream,
+  });
 
   @override
   State<ControlButtons> createState() => _ControlButtonsState();
@@ -354,6 +363,7 @@ class _ControlButtonsState extends State<ControlButtons> {
                   showMusicOverlay(
                     context,
                     audioHandler: audioHandlerMain,
+                    positionDataStream: widget.positionDataStream,
                   );
                   setState(() {});
                 },

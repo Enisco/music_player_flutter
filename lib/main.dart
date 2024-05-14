@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'dart:async';
 
@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Audio Service Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const MainScreen(),
     );
@@ -51,10 +52,11 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromRGBO(23, 23, 23, 1),
       appBar: AppBar(
-        backgroundColor: Colors.teal,
+        backgroundColor: const Color.fromRGBO(23, 23, 23, 1),
         title: const Text(
-          "Music Player Home Screen",
+          "Enisco Music Player",
           style: TextStyle(
             color: Colors.white,
             fontSize: 16,
@@ -62,30 +64,73 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
       ),
-      body: SafeArea(
+      body: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
         child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => const MusicPlayScreen(),
-                  //   ),
-                  // );
-                  showMusicPlayerScreen(context);
-                },
-                child: const Text(
-                  "Show Music Page",
-                  style: TextStyle(
-                    color: Colors.teal,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
+              Container(
+                height: MediaQuery.of(context).size.height - 110,
+                color: Colors.black87,
+                child: StreamBuilder<Object>(
+                  stream: audioHandlerMain.queueState,
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      return ListView.builder(
+                        physics: const ClampingScrollPhysics(),
+                        itemCount: songsList.length,
+                        itemBuilder: (context, index) {
+                          if (songsList.isEmpty) {
+                            return const Text("Fetching songs list");
+                          } else {
+                            return Material(
+                              color: Colors.black,
+                              child: ListTile(
+                                leading: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(3),
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                        "${songsList[index].artUri}",
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                title: Text(
+                                  songsList[index].title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  songsList[index].artist ?? '',
+                                ),
+                                onTap: () async {
+                                  await audioHandlerMain.skipToQueueItem(index);
+                                  await showMusicPlayerScreen(context);
+                                },
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    }
+                  },
                 ),
+              ),
+              Container(
+                height: 60,
+                color: const Color.fromRGBO(23, 23, 23, 1),
               ),
             ],
           ),
@@ -439,4 +484,35 @@ class MediaLibrary {
   };
 }
 
-List<MediaItem> songsList = [];
+List<MediaItem> songsList = [
+  /*
+  MediaItem(
+    id: 'https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3',
+    album: "Science Friday",
+    title: "A Salute To Head-Scratching Science",
+    artist: "Science Friday and WNYC Studios",
+    duration: const Duration(milliseconds: 5739820),
+    artUri: Uri.parse(
+        'https://3.bp.blogspot.com/-q1OBsTx8xX8/V-lo0UPUT_I/AAAAAAAAAm0/dOe7mOfyvvoBxrJTVFMmU9_3UB2UH2B4ACEw/s640/1.png'),
+  ),
+  
+      MediaItem(
+        id: 'https://s3.amazonaws.com/scifri-segments/scifri201711241.mp3',
+        album: null,
+        title: "From Cat Rheology To Operatic Incompetence",
+        artist: "Science Friday and WNYC Studios",
+        duration: const Duration(milliseconds: 2856950),
+        artUri: Uri.parse(
+            'https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'),
+      ),
+      MediaItem(
+        id: 'https://s3.amazonaws.com/scifri-segments/scifri202011274.mp3',
+        album: "Science Friday",
+        title: "Laugh Along At Home With The Ig Nobel Awards",
+        artist: "Science Friday and WNYC Studios",
+        duration: const Duration(milliseconds: 1791883),
+        artUri:
+            Uri.parse('https://i.ytimg.com/vi/U_0IV2fC93I/maxresdefault.jpg'),
+      ),
+      */
+];

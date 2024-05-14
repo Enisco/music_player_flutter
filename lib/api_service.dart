@@ -12,7 +12,7 @@ class ApiService {
     List<MusicModel>? tracks = [];
     try {
       final response = await http.get(
-        Uri.parse('https://api.deezer.com/artist/321/top?limit=10'),
+        Uri.parse('https://api.deezer.com/artist/333/top?limit=10'),
       ); // Replace with your desired API endpoint
       if (response.statusCode == 200) {
         var dataBody = json.decode(response.body)['data'];
@@ -22,18 +22,16 @@ class ApiService {
               .toList()
               .cast<MusicModel>();
           print('Music data = ${tracks?.length} >>> ${tracks?.first.title}');
-          // Populate the music list
+
           songsList = [];
           songsList = convertToMediaItemList(tracks!);
-          // AudioPlayerHandlerImpl()
-          audioHandlerMain
-            // ..removeQueueItemAt(0)
-            // ..insertQueueItem(0, songsList.first)
-            ..addQueueItems(songsList)
-            ..updateQueue(songsList);
 
-          print(
-              " \n <-- AudioPlayer Queue Length: ${audioHandlerMain.queue.value.length}");
+          // Add the retrieved list to playlist Queue
+          await audioHandlerMain.addQueueItems(songsList);
+          await audioHandlerMain.updateQueue(songsList);
+          await audioHandlerMain.playMediaItem(songsList.first);
+          print('Done updating queue');
+          print("AudioPlayer Queue: ${audioHandlerMain.queue.value.length}");
         } else {
           tracks = [];
           print('Failed to load music data');
@@ -51,16 +49,27 @@ class ApiService {
 
   List<MediaItem> convertToMediaItemList(List<MusicModel> musicList) {
     return musicList.map((music) {
+      String artistsNames = getArtistsNames(music.contributors);
       return MediaItem(
         id: music.preview ?? '',
         album: music.album?.title ?? '',
         title: music.title ?? '',
-        artist: music.artist?.name ?? '',
-        duration: Duration(seconds: music.duration ?? 0),
+        artist: artistsNames,
+        duration: Duration(milliseconds: music.duration ?? 0),
         artUri: music.album != null
             ? Uri.parse(music.album!.coverMedium ?? '')
             : null,
       );
     }).toList();
+  }
+
+  getArtistsNames(List<Contributor>? contributors) {
+    String artistsNames = '${contributors?.first.name}';
+    if (contributors!.length > 1) {
+      for (int i = 1; i < contributors.length; i++) {
+        artistsNames = "$artistsNames, ${contributors[i].name}";
+      }
+    }
+    return artistsNames;
   }
 }
