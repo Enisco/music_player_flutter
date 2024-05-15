@@ -3,8 +3,8 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:music_player_flutter/common.dart';
-import 'package:music_player_flutter/music_player_screen.dart';
+import 'package:music_player_flutter/music_player_resources/common.dart';
+import 'package:music_player_flutter/views/music_player_screen.dart';
 
 OverlayEntry? overlayEntry;
 bool hideOverlay = false;

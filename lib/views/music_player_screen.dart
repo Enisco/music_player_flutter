@@ -4,9 +4,9 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:music_player_flutter/common.dart';
-import 'package:music_player_flutter/custom_overlay.dart';
-import 'package:music_player_flutter/main.dart';
+import 'package:music_player_flutter/music_player_resources/common.dart';
+import 'package:music_player_flutter/music_player_resources/custom_overlay.dart';
+import 'package:music_player_flutter/music_player_resources/music_service.dart';
 import 'package:rxdart/rxdart.dart';
 
 showMusicPlayerScreen(

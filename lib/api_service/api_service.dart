@@ -4,8 +4,8 @@ import 'dart:convert';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:http/http.dart' as http;
-import 'package:music_player_flutter/main.dart';
-import 'package:music_player_flutter/music_model.dart';
+import 'package:music_player_flutter/music_player_resources/music_model.dart';
+import 'package:music_player_flutter/music_player_resources/music_service.dart';
 
 class ApiService {
   fetchMusicData() async {
@@ -32,7 +32,8 @@ class ApiService {
           await audioHandlerMain.playMediaItem(songsList.first);
           print('Done updating queue');
           print("AudioPlayer Queue: ${audioHandlerMain.queue.value.length}");
-          print("Duration check: ${songsList.first.duration} - ${songsList[3].duration}");
+          print(
+              "Duration check: ${songsList.first.duration} - ${songsList[3].duration}");
         } else {
           tracks = [];
           print('Failed to load music data');
