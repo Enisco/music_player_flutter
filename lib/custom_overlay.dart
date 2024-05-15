@@ -8,10 +8,12 @@ import 'package:music_player_flutter/music_player_screen.dart';
 
 OverlayEntry? overlayEntry;
 bool hideOverlay = false;
+bool musicOverlayIsActive = false;
 
 closeOverlay(AudioHandler audioHandler) {
   overlayEntry?.remove();
   audioHandler.pause();
+  musicOverlayIsActive = false;
 }
 
 void showMusicOverlay(
@@ -22,7 +24,7 @@ void showMusicOverlay(
   OverlayEntry buildOverlay() {
     return OverlayEntry(
       builder: (context) => Positioned(
-        bottom: 65,
+        bottom: 5,
         left: 0,
         right: 0,
         child: hideOverlay

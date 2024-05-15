@@ -330,60 +330,78 @@ class _ControlButtonsState extends State<ControlButtons> {
             );
           },
         ),
-        StreamBuilder<PlaybackState>(
-          stream: widget.audioHandler.playbackState,
-          builder: (context, snapshot) {
-            final playbackState = snapshot.data;
-            final processingState = playbackState?.processingState;
-            final playing = playbackState?.playing;
-            if (processingState == AudioProcessingState.loading ||
-                processingState == AudioProcessingState.buffering) {
-              return Container(
-                margin: const EdgeInsets.all(8.0),
-                width: 34.0,
-                height: 34.0,
-                child: const CircularProgressIndicator(
-                  color: Colors.orange,
-                ),
-              );
-            } else if (playing != true) {
-              return IconButton(
-                icon: const CircleAvatar(
-                  radius: 32,
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.play_arrow,
-                    size: 38,
-                    color: Colors.black,
+        SizedBox(
+          height: 70,
+          child: StreamBuilder<PlaybackState>(
+            stream: widget.audioHandler.playbackState,
+            builder: (context, snapshot) {
+              final playbackState = snapshot.data;
+              final processingState = playbackState?.processingState;
+              final playing = playbackState?.playing;
+              if (processingState == AudioProcessingState.loading ||
+                  processingState == AudioProcessingState.buffering) {
+                return Container(
+                  margin: const EdgeInsets.all(8.0),
+                  height: 70,
+                  width: 70,
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.orange,
+                    ),
                   ),
-                ),
-                iconSize: 64.0,
-                onPressed: () {
-                  widget.audioHandler.play();
-                  showMusicOverlay(
-                    context,
-                    audioHandler: audioHandlerMain,
-                    positionDataStream: widget.positionDataStream,
-                  );
-                  setState(() {});
-                },
-              );
-            } else {
-              return IconButton(
-                icon: const CircleAvatar(
-                  radius: 32,
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.pause,
-                    size: 38,
-                    color: Colors.black,
+                );
+              } else if (playing != true) {
+                return SizedBox(
+                  height: 70,
+                  width: 70,
+                  child: IconButton(
+                    icon: const CircleAvatar(
+                      radius: 32,
+                      backgroundColor: Colors.white,
+                      child: Icon(
+                        Icons.play_arrow,
+                        size: 38,
+                        color: Colors.black,
+                      ),
+                    ),
+                    iconSize: 64.0,
+                    onPressed: () {
+                      widget.audioHandler.play();
+                      if (musicOverlayIsActive == false) {
+                        showMusicOverlay(
+                          context,
+                          audioHandler: audioHandlerMain,
+                          positionDataStream: widget.positionDataStream,
+                        );
+                        musicOverlayIsActive = true;
+                      } else {
+                        print("Overlay is already active. Updating");
+                      }
+                      setState(() {});
+                    },
                   ),
-                ),
-                iconSize: 64.0,
-                onPressed: widget.audioHandler.pause,
-              );
-            }
-          },
+                );
+              } else {
+                return SizedBox(
+                  height: 70,
+                  width: 70,
+                  child: IconButton(
+                    icon: const CircleAvatar(
+                      radius: 32,
+                      backgroundColor: Colors.white,
+                      child: Icon(
+                        Icons.pause,
+                        size: 38,
+                        color: Colors.black,
+                      ),
+                    ),
+                    iconSize: 64.0,
+                    onPressed: widget.audioHandler.pause,
+                  ),
+                );
+              }
+            },
+          ),
         ),
         StreamBuilder<QueueState>(
           stream: widget.audioHandler.queueState,

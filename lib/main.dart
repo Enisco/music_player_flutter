@@ -83,7 +83,7 @@ class _MainScreenState extends State<MainScreen> {
                       );
                     } else {
                       return ListView.builder(
-                        physics: const ClampingScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: songsList.length,
                         itemBuilder: (context, index) {
                           if (songsList.isEmpty) {
@@ -129,7 +129,7 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ),
               Container(
-                height: 60,
+                height: 65,
                 color: const Color.fromRGBO(23, 23, 23, 1),
               ),
             ],

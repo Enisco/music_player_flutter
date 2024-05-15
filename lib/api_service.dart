@@ -32,6 +32,7 @@ class ApiService {
           await audioHandlerMain.playMediaItem(songsList.first);
           print('Done updating queue');
           print("AudioPlayer Queue: ${audioHandlerMain.queue.value.length}");
+          print("Duration check: ${songsList.first.duration} - ${songsList[3].duration}");
         } else {
           tracks = [];
           print('Failed to load music data');
@@ -55,7 +56,7 @@ class ApiService {
         album: music.album?.title ?? '',
         title: music.title ?? '',
         artist: artistsNames,
-        duration: Duration(milliseconds: music.duration ?? 0),
+        duration: Duration(seconds: music.duration ?? 0),
         artUri: music.album != null
             ? Uri.parse(music.album!.coverMedium ?? '')
             : null,
